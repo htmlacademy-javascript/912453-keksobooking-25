@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг»
 
 * Студент: [Dmitriy Kozlov](https://up.htmlacademy.ru/javascript/25/user/912453).
-* Наставник: `Александр Карцев`.
+* Наставник: [Александр Карцев](https://htmlacademy.ru/profile/id663289).
 
 ---
 
