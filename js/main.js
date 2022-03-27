@@ -1,3 +1,4 @@
-import {getAdsArray} from './data.js';
+import {createCards} from './cards.js';
 
-getAdsArray(10).forEach(() => {}); // Генерирую и перебираю массив чтобы успокоить линтер
+const mapCanvas = document.querySelector('#map-canvas');
+mapCanvas.appendChild(createCards(1));
