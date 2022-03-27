@@ -47,7 +47,7 @@ const getMockRealEstate = () => realEstateObjects[getRandomInRangeInt(0, realEst
 // Для динамической генерации объектов с заданной структурой используем конструкторы
 // пока они будут вызываться в текущем контексте, думаю, некоторые параметры не нужны
 function MockAuthor() {
-  this.avatar = `img/avatars/user${getRandomInRangeInt(1, 10)}.png`;
+  this.avatar = `img/avatars/user0${getRandomInRangeInt(1, 10)}.png`;
 }
 
 function MockLocation() {
