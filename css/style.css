@@ -1028,3 +1028,12 @@ fieldset {
 .hidden {
   display: none;
 }
+
+/**
+ * Сообщения для ошибок валидации
+ */
+.ad-form__invalid-message {
+  margin: 0;
+  padding: 0;
+  color: red;
+}
