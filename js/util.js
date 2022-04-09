@@ -12,4 +12,4 @@ const getRandomInRangeFloat = (rangeFrom, rangeTo, accuracy) => {
   return null;
 };
 
-export {getRandomInRangeInt, getRandomInRangeFloat};
+export { getRandomInRangeInt, getRandomInRangeFloat };
