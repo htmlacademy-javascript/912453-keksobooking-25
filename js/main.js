@@ -1,7 +1,4 @@
-import {createCards} from './cards.js';
-import {deactivateForm, activateForm} from './form.js';
+import { getAdsArray } from './data.js';
+import { showMarkers } from './map.js';
 
-deactivateForm();
-activateForm(); // временно оставляю включенной для тестирования
-const mapCanvas = document.querySelector('#map-canvas');
-mapCanvas.appendChild(createCards(1));
+showMarkers(getAdsArray(10));

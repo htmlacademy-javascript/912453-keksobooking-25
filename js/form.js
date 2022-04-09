@@ -1,24 +1,13 @@
 const form = document.querySelector('.ad-form');
-
-const deactivateForm = () => {
-  form.classList.add('ad-form--disabled');
-  form.querySelectorAll('fieldset').forEach((fieldset) => {fieldset.disabled = true;});
-};
-
-const activateForm = () => {
-  form.classList.remove('ad-form--disabled');
-  form.querySelectorAll('fieldset').forEach((fieldset) => {fieldset.disabled = false;});
-};
-
-
-//// Валидация формы ////
-
-//Объявляем поля для валидации и константы
 const titleField = form.querySelector('#title');
 const roomsField = form.querySelector('#room_number');
 const capacityField = form.querySelector('#capacity');
 const priceField = form.querySelector('#price');
 const typeField = form.querySelector('#type');
+const timeinField = form.querySelector('#timein');
+const timeoutField = form.querySelector('#timeout');
+const addressField = form.querySelector('#address');
+const priceSlider = form.querySelector('.ad-form__slider');
 
 const MIN_PRICES = {
   flat: 1000,
@@ -31,11 +20,26 @@ const MAX_PRICE = 100000;
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 
-
-// Добавляем необходимые атрибуты для Pristine
+//// Валидация формы ////
+// Добавляем необходимые атрибуты
 titleField.setAttribute('data-pristine-required-message', 'Обязательно впишите заголовок');
 priceField.setAttribute('data-pristine-required-message', 'Укажите цену');
+addressField.setAttribute('readonly', true);
 
+//  Добавляем NoUISlider
+noUiSlider.create(priceSlider, {
+  range: {
+    min: MIN_PRICES[typeField.value],
+    max: MAX_PRICE,
+  },
+  start: MIN_PRICES[typeField.value],
+  step: 1,
+  connect: 'lower',
+});
+
+priceSlider.noUiSlider.on('update', () => {
+  priceField.value = Number(priceSlider.noUiSlider.get()).toFixed(0);
+});
 
 // Создаем экземпляр Pristine и назначем проверку по событию отправки формы
 const pristine = new Pristine(form,
@@ -57,7 +61,20 @@ form.addEventListener('submit', (evt) => {
 // Тип и количество комнат по смыслу зависят от объекта недвижимости и в реальной жизни не могут произвольно меняться
 // логичнее верифицировать зависимые от них поля, поэтому при изменении их состояния просто запускем валидацию
 roomsField.addEventListener('change', () => pristine.validate());
-typeField.addEventListener('change', () => pristine.validate());
+typeField.addEventListener('change', () => {
+  priceSlider.noUiSlider.updateOptions({
+    range: {
+      min: MIN_PRICES[typeField.value],
+      max: MAX_PRICE,
+    },
+    // step: 0.1,
+  });
+  pristine.validate();
+});
+
+timeinField.addEventListener('change', () => { timeoutField.value = timeinField.value; });
+priceField.addEventListener('change', () => { priceSlider.noUiSlider.set(Number(priceField.value)); });
+timeoutField.addEventListener('change', () => { timeinField.value = timeoutField.value; });
 
 
 // Фукции для проверки каждого отдельного поля
@@ -71,9 +88,9 @@ const validateCapacity = () => (Number(roomsField.value) === 100 && Number(capac
 const getTitleValidationError = () => {
   if (titleField.value === '') {
     return 'Обязательно укажите заголовок!';
-  } else if(titleField.value.length < MIN_TITLE_LENGTH) {
+  } else if (titleField.value.length < MIN_TITLE_LENGTH) {
     return `Минимальная длина заголовка - ${MIN_TITLE_LENGTH} симв.`;
-  } else if(titleField.value.length > MAX_TITLE_LENGTH) {
+  } else if (titleField.value.length > MAX_TITLE_LENGTH) {
     return `Максимальная длина заголовка - ${MAX_TITLE_LENGTH} симв.`;
   }
 };
@@ -94,11 +111,26 @@ const getCapacityValidationError = () => {
   }
 };
 
-
 // Назначаем Pristine фунции валидации
 pristine.addValidator(titleField, validateTitle, getTitleValidationError);
 pristine.addValidator(priceField, validatePrice, getPriceValidationError);
 pristine.addValidator(capacityField, validateCapacity, getCapacityValidationError);
 
+// Функции внешнего интерфейса
+const deactivateForm = () => {
+  form.classList.add('ad-form--disabled');
+  form.querySelectorAll('fieldset').forEach((fieldset) => { fieldset.disabled = true; });
+};
 
-export {activateForm, deactivateForm};
+const activateForm = () => {
+  form.classList.remove('ad-form--disabled');
+  form.querySelectorAll('fieldset').forEach((fieldset) => { fieldset.disabled = false; });
+};
+
+const setAddress = ({ lat, lng }) => {
+  addressField.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+};
+
+deactivateForm();
+
+export { activateForm, deactivateForm, setAddress };
