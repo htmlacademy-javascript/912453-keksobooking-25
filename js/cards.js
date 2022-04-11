@@ -88,7 +88,7 @@ const createCard = ({ author, offer }) => {
     newCard.querySelector('.popup__features').innerHTML = '';
     newCard.querySelector('.popup__features').append(featuresList);
   } else {
-    offer.features.classList.add('hidden');
+    newCard.querySelector('.popup__features').classList.add('hidden');
   }
   if (offer.description) {
     newCard.querySelector('.popup__description').textContent = offer.description;
