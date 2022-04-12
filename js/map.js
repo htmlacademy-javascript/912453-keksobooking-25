@@ -83,4 +83,9 @@ const showMarkers = (adsArray) => {
   });
 };
 
-export { showMarkers };
+const resetMap = () => {
+  map.setView(LOCATIONS.TOKIO, INIT_SCALE);
+  mainMarker.setLatLng(LOCATIONS.TOKIO);
+};
+
+export { showMarkers, resetMap };

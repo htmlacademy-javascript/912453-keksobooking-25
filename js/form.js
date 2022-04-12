@@ -1,3 +1,5 @@
+import { sendFormData } from './data.js';
+
 const form = document.querySelector('.ad-form');
 const titleField = form.querySelector('#title');
 const roomsField = form.querySelector('#room_number');
@@ -51,12 +53,6 @@ const pristine = new Pristine(form,
   },
   true);
 
-form.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  if (pristine.validate()) {
-    form.submit();
-  }
-});
 
 // Тип и количество комнат по смыслу зависят от объекта недвижимости и в реальной жизни не могут произвольно меняться
 // логичнее верифицировать зависимые от них поля, поэтому при изменении их состояния просто запускем валидацию
@@ -67,7 +63,6 @@ typeField.addEventListener('change', () => {
       min: MIN_PRICES[typeField.value],
       max: MAX_PRICE,
     },
-    // step: 0.1,
   });
   pristine.validate();
 });
@@ -131,6 +126,34 @@ const setAddress = ({ lat, lng }) => {
   addressField.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 };
 
+const onFormSubmit = (onSuccess, onFail) => {
+  form.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    if (pristine.validate()) {
+      sendFormData(onSuccess, onFail, new FormData(evt.target));
+      deactivateForm();
+    }
+  });
+};
+
+const onResetButtonClick = (handler) => {
+  document.querySelector('.ad-form__reset').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    handler();
+  });
+};
+
+const resetForm = () => {
+  form.reset();
+  priceSlider.noUiSlider.updateOptions({
+    range: {
+      min: MIN_PRICES[typeField.value],
+      max: MAX_PRICE,
+    },
+    start: MIN_PRICES[typeField.value],
+  });
+};
+
 deactivateForm();
 
-export { activateForm, deactivateForm, setAddress };
+export { activateForm, deactivateForm, setAddress, onFormSubmit, onResetButtonClick, resetForm };
