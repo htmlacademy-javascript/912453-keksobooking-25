@@ -154,6 +154,4 @@ const resetForm = () => {
   });
 };
 
-deactivateForm();
-
 export { activateForm, deactivateForm, setAddress, onFormSubmit, onResetButtonClick, resetForm };

@@ -1,5 +1,6 @@
-import { activateForm, setAddress } from './form.js';
+import { setAddress } from './form.js';
 import { createCard } from './cards.js';
+import { applyFilter } from './filter.js';
 
 // Настройки по умолчанию
 const LOCATIONS = {
@@ -10,20 +11,24 @@ const PINS = {
   SPECIAL: { sizeXY: [52, 52], anchorXY: [26, 52], src: '../img/main-pin.svg' },
   SIMILAR: { sizeXY: [40, 40], anchorXY: [20, 40], src: '../img/pin.svg' },
 };
+const map = L.map('map-canvas');
 
 // Инициализация карты
-const map = L.map('map-canvas')
-  .on('load', () => {
-    activateForm();
-  })
-  .setView(LOCATIONS.TOKIO, INIT_SCALE);
+const onMapInit = (callback) => {
+  map
+    .on('load', () => {
+      callback();
+    })
+    .setView(LOCATIONS.TOKIO, INIT_SCALE);
 
-L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
-).addTo(map);
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    },
+  ).addTo(map);
+};
+
 
 // Созаем нужные иконки
 const mainMarkerIcon = L.icon(
@@ -76,9 +81,9 @@ const createSimilarMarker = (location, content) => {
 
 ///// Функции интерфейса модуля
 // Переотрисовка на карте маркеров объявлений на основе массива данных
-const showMarkers = (adsArray) => {
+const showMarkers = (adsArray, markersMacCount) => {
   similarMarkersGroup.clearLayers();
-  adsArray.forEach((advert) => {
+  applyFilter(adsArray).slice(0, markersMacCount).forEach((advert) => {
     createSimilarMarker(advert.location, createCard(advert));
   });
 };
@@ -88,4 +93,4 @@ const resetMap = () => {
   mainMarker.setLatLng(LOCATIONS.TOKIO);
 };
 
-export { showMarkers, resetMap };
+export { onMapInit, showMarkers, resetMap };
