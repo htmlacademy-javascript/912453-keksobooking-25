@@ -1,23 +1,37 @@
 import { getAdsData } from './data.js';
-import { showMarkers, resetMap } from './map.js';
-import { createModalError, createModalSuccess } from './util.js';
-import { onFormSubmit, onResetButtonClick, resetForm, activateForm } from './form.js';
+import { onMapInit, showMarkers, resetMap } from './map.js';
+import { createModalError, createModalSuccess, debounce } from './util.js';
+import { onFormSubmit, onResetButtonClick, resetForm, activateForm, deactivateForm } from './form.js';
+import { onFilterChange, activateFilter, deactivateFilter, reserFilterForm } from './filter.js';
 
 const ADS_COUNT = 10;
 
-getAdsData((adsArray) => showMarkers(adsArray.slice(0, ADS_COUNT)));
+deactivateForm();
+deactivateFilter();
 
-onFormSubmit(() => {
-  createModalSuccess();
-  resetForm();
-  resetMap();
-  activateForm();
-}, () => {
-  createModalError();
-  activateForm();
-});
+onMapInit(() => {
+  getAdsData((adsArray) => {
+    showMarkers(adsArray, ADS_COUNT);
+    onFilterChange(debounce(() => showMarkers(adsArray, ADS_COUNT)));
+    activateForm();
+    activateFilter();
 
-onResetButtonClick(() => {
-  resetForm();
-  resetMap();
+    onFormSubmit(() => {
+      createModalSuccess();
+      resetForm();
+      reserFilterForm();
+      resetMap();
+      showMarkers(adsArray, ADS_COUNT);
+      activateForm();
+    }, () => {
+      createModalError();
+    });
+
+    onResetButtonClick(() => {
+      resetForm();
+      reserFilterForm();
+      resetMap();
+      showMarkers(adsArray, ADS_COUNT);
+    });
+  });
 });
