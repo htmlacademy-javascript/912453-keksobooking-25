@@ -81,7 +81,7 @@ photosFileChooser.addEventListener('change', () => {
   for (let i = 0; i < photosFileChooser.files.length; i++) {
     if (FILE_TYPES.some((it) => photosFileChooser.files[i].name.toLowerCase().endsWith(it))) {
       photosPreviewContainer.append(createPhotoPreview(URL.createObjectURL(photosFileChooser.files[i]), i + 1));
-      if (i === PHOTO_PREVIEWS.COUNT - 1) { break; } // не даем блоку фотографий переполниться, потму и не используем forEach 
+      if (i === PHOTO_PREVIEWS.COUNT - 1) { break; } // не даем блоку фотографий переполниться, потму и не используем forEach
     }
   }
 });
