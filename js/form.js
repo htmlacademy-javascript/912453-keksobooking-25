@@ -10,6 +10,11 @@ const timeinField = form.querySelector('#timein');
 const timeoutField = form.querySelector('#timeout');
 const addressField = form.querySelector('#address');
 const priceSlider = form.querySelector('.ad-form__slider');
+const avatarPreview = form.querySelector('.ad-form-header__preview img');
+const avatarFileChooser = form.querySelector('#avatar');
+const photosPreviewElement = form.querySelector('.ad-form__photo');
+const photosPreviewContainer = form.querySelector('.ad-form__photo-container');
+const photosFileChooser = form.querySelector('#images');
 
 const MIN_PRICES = {
   flat: 1000,
@@ -21,6 +26,66 @@ const MIN_PRICES = {
 const MAX_PRICE = 100000;
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+const PHOTO_PREVIEWS = {
+  COUNT: 10,
+  STYLE: {
+    width: '70px',
+    height: '70px',
+  },
+};
+
+// Превью аватарки пользователя в объявлении
+avatarFileChooser.setAttribute('accept', 'image/png, image/jpeg');
+avatarFileChooser.addEventListener('change', () => {
+  const file = avatarFileChooser.files[0];
+  const fileName = file.name.toLowerCase();
+
+  if (FILE_TYPES.some((it) => fileName.endsWith(it))) {
+    avatarPreview.src = URL.createObjectURL(file);
+  }
+});
+
+const resetAvatarChooser = () => {
+  avatarPreview.src = '/img/muffin-grey.svg';
+};
+
+///////// Превью фотографий объекта в объявлении
+// Тут мы отступаем от ТЗ, в котором не говорится о загрузке нескольких фото,
+// но загружаемые объявления бывают с несколькими фото, и внешний вид блока-контейнера подсказывает,
+// что туда поместится до 10 миниатюр без искжения раметки
+photosFileChooser.setAttribute('multiple', 'multiple');
+photosFileChooser.setAttribute('accept', 'image/png, image/jpeg');
+photosPreviewElement.style.overflow = 'hidden';
+
+// Отдельной функцией генерируем блок с изображением
+const createPhotoPreview = (url, number) => {
+  const newPhoto = photosPreviewElement.cloneNode(true);
+  newPhoto.append(document.createElement('img'));
+  newPhoto.firstChild.setAttribute('src', url);
+  newPhoto.firstChild.setAttribute('alt', `Фотография-${number}`);
+  newPhoto.firstChild.style.width = PHOTO_PREVIEWS.STYLE.width;
+  newPhoto.firstChild.style.height = PHOTO_PREVIEWS.STYLE.height;
+  return newPhoto;
+};
+
+const resetPhotosPreview = () => {
+  photosPreviewContainer.querySelectorAll('.ad-form__photo').forEach((it) => it.remove());
+  photosPreviewContainer.append(photosPreviewElement);
+};
+
+// При выборе изображений в цикле создаем элементы из массива файлов соответствующего поля photosFileChooser
+photosFileChooser.addEventListener('change', () => {
+  resetPhotosPreview();
+  photosPreviewElement.remove(); // Пустой элемент в контейнере не нужен
+  for (let i = 0; i < photosFileChooser.files.length; i++) {
+    if (FILE_TYPES.some((it) => photosFileChooser.files[i].name.toLowerCase().endsWith(it))) {
+      photosPreviewContainer.append(createPhotoPreview(URL.createObjectURL(photosFileChooser.files[i]), i + 1));
+      if (i === PHOTO_PREVIEWS.COUNT - 1) { break; } // не даем блоку фотографий переполниться, потму и не используем forEach
+    }
+  }
+});
+
 
 //// Валидация формы ////
 // Добавляем необходимые атрибуты
@@ -152,6 +217,8 @@ const resetForm = () => {
     },
     start: MIN_PRICES[typeField.value],
   });
+  resetAvatarChooser();
+  resetPhotosPreview();
 };
 
 export { activateForm, deactivateForm, setAddress, onFormSubmit, onResetButtonClick, resetForm };
