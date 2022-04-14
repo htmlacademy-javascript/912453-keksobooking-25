@@ -2,7 +2,7 @@ import { getAdsData } from './data.js';
 import { onMapInit, showMarkers, resetMap } from './map.js';
 import { createModalError, createModalSuccess, debounce } from './util.js';
 import { onFormSubmit, onResetButtonClick, resetForm, activateForm, deactivateForm } from './form.js';
-import { onFilterChange, activateFilter, deactivateFilter, reserFilterForm } from './filter.js';
+import { onFilterChange, activateFilter, deactivateFilter, resetFilterForm } from './filter.js';
 
 const ADS_COUNT = 10;
 
@@ -19,7 +19,7 @@ onMapInit(() => {
     onFormSubmit(() => {
       createModalSuccess();
       resetForm();
-      reserFilterForm();
+      resetFilterForm();
       resetMap();
       showMarkers(adsArray, ADS_COUNT);
       activateForm();
@@ -29,7 +29,7 @@ onMapInit(() => {
 
     onResetButtonClick(() => {
       resetForm();
-      reserFilterForm();
+      resetFilterForm();
       resetMap();
       showMarkers(adsArray, ADS_COUNT);
     });

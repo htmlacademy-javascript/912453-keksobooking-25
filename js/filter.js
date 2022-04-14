@@ -57,8 +57,8 @@ const activateFilter = () => {
   filterForm.querySelectorAll('.map__filter').forEach((field) => { field.disabled = false; });
 };
 
-const reserFilterForm = () => {
+const resetFilterForm = () => {
   filterForm.reset();
 };
 
-export { onFilterChange, applyFilter, activateFilter, deactivateFilter, reserFilterForm };
+export { onFilterChange, applyFilter, activateFilter, deactivateFilter, resetFilterForm };
