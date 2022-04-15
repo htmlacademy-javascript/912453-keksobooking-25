@@ -45,39 +45,29 @@ const getPhotosList = (photos, elementTemplate) => {
 // Теперь основная функция данного модуля - создание карточки из входных данных
 const createCard = ({ author, offer }) => {
   const newCard = cardTemplate.cloneNode(true);
-  if (offer.title) {
-    newCard.querySelector('.popup__title').textContent = offer.title;
-  } else {
-    newCard.querySelector('.popup__title').classList.add('hidden');
-  }
+  // Элементы с простым содержимым заполняются однообразно, выносим в отдельную функцию
+  const fillCardElement = (cssSelector, content, isNotEmpty = true) => {
+    if (content && isNotEmpty) {
+      newCard.querySelector(cssSelector).textContent = content;
+    } else {
+      newCard.querySelector(cssSelector).classList.add('hidden');
+    }
+  };
+  fillCardElement('.popup__title', offer.title);
+  fillCardElement('.popup__text--address', offer.address);
+  fillCardElement('.popup__text--price', `${offer.price} ₽/ночь`, offer.price);
+  fillCardElement('.popup__type', TYPES[offer.type], offer.type);
+  fillCardElement('.popup__text--capacity', getCapacityText(offer), offer.rooms && offer.guests);
+  fillCardElement('.popup__text--time', `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`, offer.checkin && offer.checkout);
+  fillCardElement('.popup__description', offer.description);
+
+  // Элементы "аватар", "удобства" и "фото" требуют индивидуального наполнения
   if (author.avatar) {
     newCard.querySelector('.popup__avatar').src = author.avatar;
   } else {
     newCard.querySelector('.popup__avatar').classList.add('hidden');
   }
-  if (offer.address) {
-    newCard.querySelector('.popup__text--address').textContent = offer.address;
-  } else {
-    newCard.querySelector('.popup__text--address').classList.add('hidden');
-  }
-  if (offer.price) {
-    newCard.querySelector('.popup__text--price').textContent = `${offer.price} ₽/ночь`;
-  }
-  if (offer.type) {
-    newCard.querySelector('.popup__type').textContent = TYPES[offer.type];
-  } else {
-    newCard.querySelector('.popup__type').classList.add('hidden');
-  }
-  if (offer.rooms && offer.guests) {
-    newCard.querySelector('.popup__text--capacity').textContent = getCapacityText(offer);
-  } else {
-    newCard.querySelector('.popup__text--capacity').classList.add('hidden');
-  }
-  if (offer.checkin && offer.checkout) {
-    newCard.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkin}`;
-  } else {
-    newCard.querySelector('.popup__text--time').classList.add('hidden');
-  }
+
   if (offer.features) {
     const featuresList = document.createDocumentFragment();
     offer.features.forEach((feature) => {
@@ -90,11 +80,7 @@ const createCard = ({ author, offer }) => {
   } else {
     newCard.querySelector('.popup__features').classList.add('hidden');
   }
-  if (offer.description) {
-    newCard.querySelector('.popup__description').textContent = offer.description;
-  } else {
-    newCard.querySelector('.popup__description').classList.add('hidden');
-  }
+
   if (offer.photos) {
     const photosList = newCard.querySelector('.popup__photos');
     const photosFragment = getPhotosList(offer.photos, photosList.querySelector('img'));
