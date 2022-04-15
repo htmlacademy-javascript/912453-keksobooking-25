@@ -1,6 +1,6 @@
 import { getAdsData } from './data.js';
 import { onMapInit, showMarkers, resetMap } from './map.js';
-import { createModalError, createModalSuccess, debounce } from './util.js';
+import { showUploadErrorMessage, showDownloadErrorMessage, showSuccessUploadMessage, debounce } from './util.js';
 import { onFormSubmit, onResetButtonClick, resetForm, activateForm, deactivateForm } from './form.js';
 import { onFilterChange, activateFilter, deactivateFilter, resetFilterForm } from './filter.js';
 
@@ -17,14 +17,15 @@ onMapInit(() => {
     activateFilter();
 
     onFormSubmit(() => {
-      createModalSuccess();
+      showSuccessUploadMessage();
       resetForm();
       resetFilterForm();
       resetMap();
       showMarkers(adsArray, ADS_COUNT);
       activateForm();
     }, () => {
-      createModalError();
+      showUploadErrorMessage();
+      activateForm();
     });
 
     onResetButtonClick(() => {
@@ -33,5 +34,7 @@ onMapInit(() => {
       resetMap();
       showMarkers(adsArray, ADS_COUNT);
     });
+  }, () => {
+    showDownloadErrorMessage();
   });
 });

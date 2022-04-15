@@ -11,15 +11,23 @@ function onEscKeydown(evt) {
   }
 }
 
-const createModalSuccess = () => {
+const showSuccessUploadMessage = () => {
   const newSuccessMessage = successModatTemplate.cloneNode(true);
   newSuccessMessage.classList.add('modal');
   showModal(newSuccessMessage);
 };
 
-const createModalError = () => {
+const showUploadErrorMessage = () => {
   const newErrorMessage = errorModalTemplate.cloneNode(true);
   newErrorMessage.classList.add('modal');
+  showModal(newErrorMessage);
+};
+
+const showDownloadErrorMessage = () => {
+  const newErrorMessage = errorModalTemplate.cloneNode(true);
+  newErrorMessage.classList.add('modal');
+  newErrorMessage.querySelector('.error__message').textContent = 'Ошибка загрузки объявлений с сервера';
+  newErrorMessage.querySelector('.error__button').textContent = 'Понять и простить';
   showModal(newErrorMessage);
 };
 
@@ -45,4 +53,4 @@ const debounce = (callback, timeoutDelay = DEFAULT_DEBOUNCE_DELAAY) => {
   };
 };
 
-export { createModalError, createModalSuccess, debounce };
+export { showUploadErrorMessage, showDownloadErrorMessage, showSuccessUploadMessage, debounce };

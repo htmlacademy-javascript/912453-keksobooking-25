@@ -15,18 +15,23 @@ const priceFilter = (advert) => {
 };
 const roomsFilter = (advert) => roomsFilterField.value === 'any' || Number(roomsFilterField.value) === advert.offer.rooms;
 const guestsFilter = (advert) => guestsFilterField.value === 'any' || Number(guestsFilterField.value) === advert.offer.guests;
-
-const getFeaturesMatchRank = (advert) => {
+const featuresFilter = (advert) => {
   const checkedFeatures = featuresFilterField.querySelectorAll('input[type="checkbox"]:checked');
-  let rank = 0;
-  if (advert.offer.features && checkedFeatures.length > 0) {
+  advert.rank = 0;
+  if (checkedFeatures.length === 0) {
+    return true;
+  } else if (advert.offer.features) {
     advert.offer.features.forEach((feature) => {
       if (Array.from(checkedFeatures).some((checkedFeature) => feature === checkedFeature.value)) {
-        rank++;
+        advert.rank++;
       }
     });
+    // тут можно регулировать степень соответствия фильтру по "удобствам", но оставляю в соответствии с ТЗ жесткий фильтр,
+    // а если в интерфейсе фильтра предусмотреть нестрогое соответствие, тут может быть условие вроде "> 0" или т.п.
+    return advert.rank === checkedFeatures.length;
+  } else {
+    return false;
   }
-  return rank;
 };
 
 const applyFilter = (adsArray) => {
@@ -35,11 +40,7 @@ const applyFilter = (adsArray) => {
     .filter(priceFilter)
     .filter(roomsFilter)
     .filter(guestsFilter)
-    .map((advert) => {
-      advert.rank = getFeaturesMatchRank(advert);
-      return advert;
-    });
-  result.sort((a, b) => b.rank - a.rank);
+    .filter(featuresFilter); // т.к. нестрогое соответствие не предусмотрено, в данной версии удалил сортировку по rank
   return result;
 };
 
