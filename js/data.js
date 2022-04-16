@@ -3,7 +3,7 @@ const UPLOAD_URL = 'https://25.javascript.pages.academy/keksobooking';
 
 const getAdsData = (onSuccess, onFail) => {
   fetch(DOWNLOAD_URL)
-    .then((response) => response.ok ? response.json() : onFail())
+    .then((response) => response.json())
     .then((data) => onSuccess(data))
     .catch(() => onFail());
 };
